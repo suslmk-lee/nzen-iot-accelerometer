@@ -19,7 +19,7 @@ func init() {
 	}
 
 	if profile == "local" {
-		_, err := ReadPropertiesFile("config.properties.sample")
+		_, err := ReadPropertiesFile("config.properties")
 		if err != nil {
 			return
 		}

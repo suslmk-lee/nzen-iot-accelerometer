@@ -16,7 +16,7 @@ var MQTTClientID string
 var MQTTTopic string
 
 func init() {
-	MQTTBroker = common.ConfInfo["mqtt.broker"]
+	MQTTBroker = common.ConfInfo["mqtt.broker.url"]
 	MQTTClientID = common.ConfInfo["mqtt.client.id"]
 	MQTTTopic = common.ConfInfo["mqtt.topic"]
 }
@@ -36,7 +36,7 @@ var messageHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messa
 		log.Printf("Error unmarshalling JSON: %v", err)
 		return
 	}
-	// 여기서 데이터를 처리합니다.
+	// Accelerometer 데이터 처리
 	processAccelerometerData(data)
 }
 

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nzen-iot-accelerometer-deployment
+  labels:
+    app: nzen-iot-accelerometer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nzen-iot-accelerometer
+  template:
+    metadata:
+      labels:
+        app: nzen-iot-accelerometer
+    spec:
+      containers:
+        - name: nzen-iot-accelerometer
+          image: 44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry/nzen-iot-accelerometer:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /root/config.properties
+              subPath: config.properties
+          env:
+            - name: PROFILE
+              value: "local"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nzen-iot-accelerometer-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nzen-iot-accelerometer-config
+data:
+  config.properties: |
+    mqtt.broker=tcp://127.0.0.1:1883
+    mqtt.client.id=accelerometer-subscriber
+    mqtt.topic=iot/accelerometer

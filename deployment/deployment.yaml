@@ -26,6 +26,8 @@ spec:
           env:
             - name: PROFILE
               value: "local"
+      imagePullSecrets:
+        - name: ncr-secret
       volumes:
         - name: config-volume
           configMap:
@@ -37,6 +39,6 @@ metadata:
   name: nzen-iot-accelerometer-config
 data:
   config.properties: |
-    mqtt.broker=tcp://127.0.0.1:1883
+    mqtt.broker.url=mosquitto.default.svc:1883
     mqtt.client.id=accelerometer-subscriber
     mqtt.topic=iot/accelerometer

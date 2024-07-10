@@ -66,15 +66,52 @@ deployment/mqtt.yaml: Mosquitto MQTT 브로커 배포 파일
 
 ```shell
 ## Mosquitto 배포
-kubectl apply -f k8s/mosquitto-deployment.yaml
+kubectl apply -f deployment/mqtt.yaml
 
 ## nzen-iot-accelerometer 배포
-kubectl apply -f k8s/nzen-iot-accelerometer-deployment.yaml
+kubectl apply -f deployment/deployment.yaml
 
 ## nzen-iot-accelerometer 배포 확인
-kubectl get pods
+$ kubectl get pod
+NAME                                                 READY   STATUS    RESTARTS   AGE
+nzen-iot-accelerometer-deployment-54f56d4465-gtt4b   1/1     Running   0          6h49m
 
-## nzen-iot-accelerometer 로그 확인
-kubectl logs <nzen-iot-accelerometer-pod-name>
+## nzen-iot-accelerometer 로그 확인 / subcribe 데이터 확인
+kubectl logs -f <nzen-iot-accelerometer-pod-name>
+```
+
+> EdgeNode로 배포하고자 할때 deployment.yaml에 nodeSelect 부분 추가 후 배포바랍니다.  
+> EdgeNode에 배포된 파드의 데이터를 조회하고자 할 때는, 배포된 엣지 노드에 접속하여 아래 명렁어로 확인 가능합니다.
+
+```shell
+## deployment.yaml  
+    spec:
+      containers:
+      ...
+      nodeSelector:
+        node-role.kubernetes.io/edge:
+```
+```shell
+## 컨테이너 아이디 조회
+$ sudo crictl ps
+CONTAINER           IMAGE                                                                                                                                                                     CREATED             STATE               NAME                     ATTEMPT             POD ID              POD
+f07df32bd5098       44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry/nzen-iot-accelerometer@sha256:4c094e63b39a54a0a7af7b1af85151cd7cd32cbcfad474bdf8431c05b377b4a1   7 hours ago         Running             nzen-iot-accelerometer   0                   94b8d232891eb       nzen-iot-accelerometer-deployment-54f56d4465-gtt4b
+b1fc386136517       docker.io/kubeedge/edgemesh-agent@sha256:a116703b06f59eb3a901034992be09dc41618f10f42bb3bbf03a08df69126ba8                                                                 7 hours ago         Running             edgemesh-agent           0                   90c012a177e9b       edgemesh-agent-2vt2x
+
+## 컨테이너 로그 확인
+$ sudo crictl logs -f f07df32bd5098
+Received accelerometer data: X=9.57, Y=5.55, Z=2.19
+Received accelerometer data: X=0.92, Y=0.98, Z=9.48
+Received accelerometer data: X=7.35, Y=6.64, Z=5.41
+Received accelerometer data: X=3.10, Y=0.42, Z=6.96
+Received accelerometer data: X=3.91, Y=4.26, Z=4.71
+Received accelerometer data: X=3.68, Y=3.65, Z=0.72
+Received accelerometer data: X=7.59, Y=4.23, Z=0.63
+Received accelerometer data: X=2.19, Y=7.17, Z=3.89
+Received accelerometer data: X=7.50, Y=0.71, Z=2.84
+Received accelerometer data: X=5.75, Y=4.01, Z=9.36
+Received accelerometer data: X=4.29, Y=9.76, Z=0.34
+Received accelerometer data: X=2.46, Y=5.26, Z=3.37
+Received accelerometer data: X=3.47, Y=2.82, Z=0.18
 ```
 
